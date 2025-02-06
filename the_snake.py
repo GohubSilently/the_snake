@@ -1,6 +1,8 @@
 from random import choice, randint
+from pygame.time import Clock
 
 import pygame
+
 
 # Константы для размеров поля и сетки:
 SCREEN_WIDTH, SCREEN_HEIGHT = 640, 480
