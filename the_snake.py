@@ -14,16 +14,10 @@ DOWN = (0, 1)
 LEFT = (-1, 0)
 RIGHT = (1, 0)
 
-# Цвет фона - черный:
-BOARD_BACKGROUND_COLOR = (0, 0, 0)
-
-# Цвет границы ячейки
+# Константы цвета:
+BOARD_BACKGROUND_COLOR = (200, 200, 200)
 BORDER_COLOR = (93, 216, 228)
-
-# Цвет яблока
 APPLE_COLOR = (255, 0, 0)
-
-# Цвет змейки
 SNAKE_COLOR = (0, 255, 0)
 
 # Скорость движения змейки:
@@ -40,20 +34,85 @@ clock = pg.time.Clock()
 
 
 # Тут опишите все классы игры.
-...
+class GameObject:
+    """Make the main class."""
+
+    def __init__(
+        self,
+        body_color
+    ):
+        self.position = (SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2)
+        self.body_color = body_color
+
+    def draw(
+        self
+    ):
+        """Raise the problem in under class."""
+        raise NotImplementedError(
+            f'Метод draw() не выполняется в {self.__init__.__name__}'
+        )
+
+    def draw_one_cell(
+        self,
+        position,
+        body_color=None
+    ):
+        """Draw one cell."""
+        if body_color is None:
+            body_color = self.body_color
+
+        rect = pg.Rect(position, (GRID_SIZE, GRID_SIZE))
+        pg.draw.rect(screen, body_color, rect)
+        pg.draw.rect(screen, BORDER_COLOR, rect, 1)
+
+
+class Apple(GameObject):
+    """Make new class Apple inhireteed by GameObject."""
+
+    def __init__(
+        self,
+        occupied_cells: list[tuple],
+        body_color=APPLE_COLOR
+    ):
+        super().__init__(body_color)
+        self.randomize_position(occupied_cells)
+
+    def randomize_position(
+        self,
+        occupied_cells
+    ):
+        """Define the position of the apple"""
+        while True:
+            new_position = (randint(0, GRID_WIDTH - 1) * GRID_SIZE,
+                            randint(0, GRID_HEIGHT - 1) * GRID_SIZE)
+            if new_position not in occupied_cells:
+                self.position = new_position
+                print(self.position)
+                return self.position
+
+    def draw(
+        self
+    ):
+        """Draw the object of the apple"""
+        self.draw_one_cell(self.position)
+
+
+
+class Snake(GameObject):
+    pass
 
 
 def main():
     # Инициализация pg:
     pg.init()
     # Тут нужно создать экземпляры классов.
-    ...
+    apple = Apple([(180, 200)])
 
-    # while True:
-    #     clock.tick(SPEED)
+    while True:
+        clock.tick(SPEED)
+        apple.draw()
 
-        # Тут опишите основную логику игры.
-        # ...
+        pg.display.update()
 
 
 if __name__ == '__main__':
