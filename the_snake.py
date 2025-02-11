@@ -207,7 +207,12 @@ def main():
         apple.draw()
         snake.draw()
 
-        pg.display.set_caption(f'ESC - выход | \t\t\t Змейка \t\t\t | Длина: {snake.length}')
+        pg.display.set_caption(
+            f'ESC - выход | \t\t\t\t'
+            f'Змейка \t\t\t\t'
+            f'| Длина: {snake.length}'
+        )
+
         pg.display.update()
 
 
