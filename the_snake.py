@@ -37,15 +37,19 @@ clock = pg.time.Clock()
 class GameObject:
     """Make class GameObject"""
 
-    def __init__(self):
+    def __init__(self, body_color):
         self.position = ((SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2))
-        self.body_color = None
+        self.body_color = body_color
 
     def draw(self):
-        """Define in under class"""
-        pass
+        """Define in under class."""
+        raise NotImplementedError(
+            f'Данный метод draw() не вызывается в подклассе'
+            f'{self.__init__.__name__}'
+        )
 
     def draw_one_cell(self, position, color=None):
+        """Draw one cell."""
         if color is None:
             color = self.body_color
         rect = (pg.Rect(position, (GRID_SIZE, GRID_SIZE)))
