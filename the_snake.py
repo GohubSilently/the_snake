@@ -60,8 +60,8 @@ class GameObject:
 class Snake(GameObject):
     """Make new class (snake) inherite by GameObject."""
 
-    def __init__(self):
-        super().__init__()
+    def __init__(self, color=SNAKE_COLOR):
+        super().__init__(color)
         self.body_color = SNAKE_COLOR
         self.positions = [(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2)]
         self.length = 1
@@ -104,10 +104,7 @@ class Snake(GameObject):
 
     def draw(self):
         """Function of drawing the apple."""
-        for position in self.positions[:-1]:
-            rect = (pg.Rect(position, (GRID_SIZE, GRID_SIZE)))
-            pg.draw.rect(screen, self.body_color, rect)
-            pg.draw.rect(screen, BORDER_COLOR, rect, 1)
+        self.draw_one_cell(self.position)
 
         # Отрисовка головы змейки
         head_rect = pg.Rect(self.positions[0], (GRID_SIZE, GRID_SIZE))
@@ -133,21 +130,23 @@ class Snake(GameObject):
 class Apple(GameObject):
     """Make new class (apple) inherite by GameObject."""
 
-    def __init__(self):
-        super().__init__()
+    def __init__(self, color=APPLE_COLOR):
+        super().__init__(color)
         self.body_color = APPLE_COLOR
         self.position = self.randomize_position()
 
-    def randomize_position(self):
+    def randomize_position(self, ocupied_cells):
         """Make the function, which define position."""
-        return (randint(0, GRID_WIDTH) * GRID_SIZE,
-                randint(0, GRID_HEIGHT) * GRID_SIZE)
+        while True:
+            new_position = (randint(0, GRID_WIDTH) * GRID_SIZE,
+                            randint(0, GRID_HEIGHT) * GRID_SIZE)
+            if new_position not in ocupied_cells:
+                return new_position
 
     def draw(self):
         """Function of drawing the apple."""
-        rect = pg.Rect(self.position, (GRID_SIZE, GRID_SIZE))
-        pg.draw.rect(screen, self.body_color, rect)
-        pg.draw.rect(screen, BORDER_COLOR, rect, 1)
+        self.draw_one_cell(self.position)
+
 
 
 def handle_keys(game_object):
