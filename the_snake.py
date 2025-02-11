@@ -46,7 +46,7 @@ class GameObject:
 
     def __init__(
         self,
-        body_color
+        body_color=None
     ):
         self.position = (SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2)
         self.body_color = body_color
@@ -78,11 +78,12 @@ class Apple(GameObject):
 
     def __init__(
         self,
-        occupied_cells: list[tuple],
+        occupied_cells=None,
         body_color=APPLE_COLOR
     ):
         super().__init__(body_color)
-        self.randomize_position(occupied_cells)
+        if occupied_cells is not None:
+            self.randomize_position(occupied_cells)
 
     def randomize_position(
         self,
@@ -113,7 +114,7 @@ class Snake(GameObject):
         super().__init__(body_color)
         self.reset()
 
-    def get_head_positions(
+    def get_head_position(
         self
     ):
         """Define the head of the snake."""
@@ -128,7 +129,7 @@ class Snake(GameObject):
         self.positions = [(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2)]
         self.last = None
 
-    def update_directions(
+    def update_direction(
         self,
         new_position
     ):
@@ -140,7 +141,7 @@ class Snake(GameObject):
         self
     ):
         """The movement of the snake."""
-        x, y = self.get_head_positions()
+        x, y = self.get_head_position()
         x_1, y_1 = self.direction
 
         head = ((x + x_1 * GRID_SIZE) % SCREEN_WIDTH,
@@ -156,7 +157,7 @@ class Snake(GameObject):
         self
     ):
         """Draw the snake."""
-        self.draw_one_cell(self.get_head_positions())
+        self.draw_one_cell(self.get_head_position())
         if self.last:
             self.draw_one_cell(self.last, BOARD_BACKGROUND_COLOR)
 
@@ -178,7 +179,7 @@ def handle_keys(snake):
                 and new_direction[0] != -snake.direction[0]
                 and new_direction[1] != -snake.direction[1]
             ):
-                snake.update_directions(new_direction)
+                snake.update_direction(new_direction)
 
 
 def main():
@@ -200,7 +201,7 @@ def main():
             snake.length += 1
             apple.position = apple.randomize_position(snake.positions)
 
-        if snake.get_head_positions() in snake.positions[4:]:
+        if snake.get_head_position() in snake.positions[4:]:
             snake.reset()
             screen.fill(BOARD_BACKGROUND_COLOR)
 
