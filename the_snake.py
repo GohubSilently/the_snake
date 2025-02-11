@@ -14,16 +14,10 @@ DOWN = (0, 1)
 LEFT = (-1, 0)
 RIGHT = (1, 0)
 
-# Цвет фона - черный:
+# Константы цвета:
 BOARD_BACKGROUND_COLOR = (0, 0, 0)
-
-# Цвет границы ячейки
 BORDER_COLOR = (93, 216, 228)
-
-# Цвет яблока
 APPLE_COLOR = (255, 0, 0)
-
-# Цвет змейки
 SNAKE_COLOR = (0, 255, 0)
 
 # Скорость движения змейки:
@@ -50,6 +44,13 @@ class GameObject:
     def draw(self):
         """Define in under class"""
         pass
+
+    def draw_one_cell(self, position, color=None):
+        if color is None:
+            color = self.body_color
+        rect = (pg.Rect(position, (GRID_SIZE, GRID_SIZE)))
+        pg.draw.rect(screen, color, rect)
+        pg.draw.rect(screen, BORDER_COLOR, rect, 1)
 
 
 class Snake(GameObject):
