@@ -21,7 +21,7 @@ DOWN = (0, 1)
 LEFT = (-1, 0)
 RIGHT = (1, 0)
 
-GAME_BUTTON = {
+MOVEMENT_SNAKE = {
     pg.K_UP: UP,
     pg.K_DOWN: DOWN,
     pg.K_LEFT: LEFT,
@@ -71,6 +71,9 @@ class GameObject:
         rect = pg.Rect(position, (GRID_SIZE, GRID_SIZE))
         pg.draw.rect(screen, body_color, rect)
 
+        if body_color != BOARD_BACKGROUND_COLOR:
+            pg.draw.rect(screen, BORDER_COLOR, rect, 1)
+
 
 class Apple(GameObject):
     """Make new class Apple inhireted by GameObject."""
@@ -88,9 +91,7 @@ class Apple(GameObject):
         occupied_cells
     ):
         """Define the position of the apple"""
-        random_cell = tuple(ALL_CELLS - set(occupied_cells))
-        self.position = choice(random_cell)
-        return self.position
+        self.position = choice(tuple(ALL_CELLS - set(occupied_cells)))
 
     def draw(
         self
@@ -108,7 +109,6 @@ class Snake(GameObject):
     ):
         super().__init__(body_color)
         self.reset()
-        self.best_length = 1
 
     def get_head_position(
         self
@@ -143,10 +143,11 @@ class Snake(GameObject):
         head_x, head_y = self.get_head_position()
         head_movement_x, head_movement_y = self.direction
 
-        new_head = ((head_x + head_movement_x * GRID_SIZE) % SCREEN_WIDTH,
-                    (head_y + head_movement_y * GRID_SIZE) % SCREEN_HEIGHT)
+        self.positions.insert(0, (
+            (head_x + head_movement_x * GRID_SIZE) % SCREEN_WIDTH,
+            (head_y + head_movement_y * GRID_SIZE) % SCREEN_HEIGHT)
+        )
 
-        self.positions.insert(0, new_head)
         self.last = (
             self.positions.pop()
             if len(self.positions) > self.length
@@ -161,13 +162,6 @@ class Snake(GameObject):
         if self.last:
             self.draw_one_cell(self.last, BOARD_BACKGROUND_COLOR)
 
-    def grow(
-        self
-    ):
-        """Grow the length of the snake and update record."""
-        self.length += 1
-        self.best_length = max(self.best_length, self.length)
-
 
 def handle_keys(snake):
     """Check the keybord."""
@@ -179,7 +173,7 @@ def handle_keys(snake):
             pg.quit()
             raise SystemExit
         if event.type == pg.KEYDOWN:
-            new_position = GAME_BUTTON.get(event.key)
+            new_position = MOVEMENT_SNAKE.get(event.key)
             if new_position:
                 snake.update_direction(new_position)
 
@@ -187,9 +181,10 @@ def handle_keys(snake):
 def main():
     """Start the game."""
     pg.init()
-    # Тут нужно создать экземпляры классов.
+
     snake = Snake()
     apple = Apple(snake.positions)
+    best_length = 1
 
     screen.fill(BOARD_BACKGROUND_COLOR)
 
@@ -199,7 +194,7 @@ def main():
         snake.move()
 
         if snake.get_head_position() == apple.position:
-            snake.grow()
+            snake.length += 1
             apple.randomize_position(snake.positions)
 
         elif snake.get_head_position() in snake.positions[4:]:
@@ -207,14 +202,17 @@ def main():
             apple.randomize_position(snake.positions)
             screen.fill(BOARD_BACKGROUND_COLOR)
 
+        elif snake.length > best_length:
+            best_length = snake.length
+
         apple.draw()
         snake.draw()
 
         new_caption = (
             f'ESC | Змейка | Длина: {snake.length} '
-            f'| Рекорд: {snake.best_length}'
+            f'| Рекорд: {best_length}'
         )
-        if new_caption != pg.display.get_caption()[0]:
+        if new_caption != pg.display.get_caption():
             pg.display.set_caption(new_caption)
 
         pg.display.update()
