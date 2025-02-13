@@ -77,7 +77,7 @@ class Apple(GameObject):
 
     def __init__(
         self,
-        occupied_cells=None,
+        occupied_cells=CENTRAL_CELL,
         body_color=APPLE_COLOR
     ):
         super().__init__(body_color)
@@ -172,7 +172,10 @@ class Snake(GameObject):
 def handle_keys(snake):
     """Check the keybord."""
     for event in pg.event.get():
-        if event.type == pg.QUIT or (event.type == pg.KEYDOWN and event.key == pg.K_ESCAPE):
+        if (
+            event.type == pg.QUIT
+            or (event.type == pg.KEYDOWN and event.key == pg.K_ESCAPE)
+        ):
             pg.quit()
             raise SystemExit
         if event.type == pg.KEYDOWN:
