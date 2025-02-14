@@ -21,7 +21,7 @@ DOWN = (0, 1)
 LEFT = (-1, 0)
 RIGHT = (1, 0)
 
-MOVEMENT_SNAKE = {
+KEY_TO_DIRECTIONS = {
     pg.K_UP: UP,
     pg.K_DOWN: DOWN,
     pg.K_LEFT: LEFT,
